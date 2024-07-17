@@ -1,4 +1,6 @@
 # Three.js Journey
+Lesson 4.
+Transform objects (position, scale, rotation, quaternion...)
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).

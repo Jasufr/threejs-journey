@@ -1,4 +1,6 @@
 # Three.js Journey
+Lesson 5.
+Animations
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).

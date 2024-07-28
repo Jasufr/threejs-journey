@@ -1,6 +1,6 @@
-# ThreeJS Journey course by Bruno Simon 📝
+# Three.JS Journey course by Bruno Simon 📝
 
-Repository listing Bruno Simon course's lessons. <br>
+Repository listing my Three.JS Journey with Bruno Simon's course. <br>
 Course's URL: https://threejs-journey.com/
 
 ![Capture d'écran 2024-07-28 195121](https://github.com/user-attachments/assets/318d097d-0dc4-43aa-b3b6-a5f3260ad078)

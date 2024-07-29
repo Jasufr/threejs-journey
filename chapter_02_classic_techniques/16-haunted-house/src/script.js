@@ -284,7 +284,7 @@ const generateGraves = () => {
 
 generateGraves()
 
-gravesTweaks.add(gravesCount, 'count').min(1).max(50).step(1).onFinishChange(() => {
+gravesTweaks.add(gravesCount, 'count').min(1).max(50).step(1).name('gravesCount').onFinishChange(() => {
   generateGraves()
 })
 

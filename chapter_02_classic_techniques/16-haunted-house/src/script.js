@@ -9,10 +9,17 @@ import { Sky } from 'three/addons/objects/Sky.js'
  */
 // Debug
 const gui = new GUI()
+gui.title('Tweaks')
+gui.close()
 const floorTweaks = gui.addFolder('Floor')
+floorTweaks.close()
 const gravesTweaks = gui.addFolder('Graves')
+gravesTweaks.close()
 const ghostsTweaks = gui.addFolder('Ghosts')
+ghostsTweaks.close()
 const fogTweaks = gui.addFolder('Fog')
+fogTweaks.close()
+
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')

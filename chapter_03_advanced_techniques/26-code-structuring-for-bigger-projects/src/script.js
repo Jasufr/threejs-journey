@@ -1,37 +1,6 @@
-class Robot {
-  constructor(name, legs) {
-    this.name = name
-    this.legs = legs
-    console.log(`I am ${this.name}. Thank you creator.`);
-  }
+import Experience from "./Experience/Experience"
 
-  sayHi() {
-    console.log(`Hello, I am ${this.name}`);
-  }
-}
-
-class FlyingRobot extends Robot {
-  constructor(name, legs) {
-    super(name, legs)
-    super.sayHi()
-  }
-  sayHi() {
-    console.log(`Hello, I am ${this.name} and I am a flying robot`);
-  }
-  takeOff() {
-    console.log(`Have a good flight ${this.name}`);
-  }
-  land() {
-    console.log(`Welcome back ${this.name}`);
-
-  }
-}
-
-const wallE = new Robot('Wall-E', 0)
-const ultron = new FlyingRobot('Ultron', 2)
-const astroBoy = new FlyingRobot('Astro Boy', 2)
-
-astroBoy.takeOff()
+const experience = new Experience(document.querySelector('canvas.webgl'))
 
 // import * as THREE from 'three'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'

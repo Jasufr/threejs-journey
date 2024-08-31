@@ -9,6 +9,10 @@ import GUI from 'lil-gui'
 // Debug
 const gui = new GUI()
 
+// const parameters = {}
+// parameters.rotationSpeed = 0.5
+
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -69,12 +73,18 @@ const material = new THREE.MeshStandardMaterial( {
     normalMap: normalTexture
 })
 
+const depthMaterial = new THREE.MeshDepthMaterial({
+  depthPacking: THREE.RGBADepthPacking
+})
+
 const customUniforms  = {
-  uTime: { value: 0 }
+  uTime: { value: 0 },
+  rotationSpeed: { value: 0.5 }
 }
 
 material.onBeforeCompile = (shader) => {
   shader.uniforms.uTime = customUniforms.uTime
+  shader.uniforms.rotationSpeed = customUniforms.rotationSpeed
 
   shader.vertexShader = shader.vertexShader.replace(
     '#include <common>',
@@ -82,6 +92,49 @@ material.onBeforeCompile = (shader) => {
     #include <common>
 
     uniform float uTime;
+    uniform float rotationSpeed;
+
+    mat2 get2dRotateMatrix(float _angle) {
+      return mat2(cos(_angle), - sin(_angle), sin(_angle), cos(_angle));
+    }
+    `
+  )
+
+  shader.vertexShader = shader.vertexShader.replace(
+    '#include <beginnormal_vertex>',
+    `
+      #include <beginnormal_vertex>
+
+      float angle = sin(position.y + uTime) * rotationSpeed;
+      // float angle = - position.y * uTime * 0.2;
+      mat2 rotateMatrix = get2dRotateMatrix(angle);
+
+      objectNormal.xz = rotateMatrix * objectNormal.xz;
+    `
+  )
+
+
+  shader.vertexShader = shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    `
+      #include <begin_vertex>
+
+      transformed.xz = rotateMatrix * transformed.xz;
+    `
+  )
+}
+
+depthMaterial.onBeforeCompile = (shader) => {
+  shader.uniforms.uTime = customUniforms.uTime
+  shader.uniforms.rotationSpeed = customUniforms.rotationSpeed
+
+  shader.vertexShader = shader.vertexShader.replace(
+    '#include <common>',
+    `
+    #include <common>
+
+    uniform float uTime;
+    uniform float rotationSpeed;
 
     mat2 get2dRotateMatrix(float _angle) {
       return mat2(cos(_angle), - sin(_angle), sin(_angle), cos(_angle));
@@ -94,7 +147,8 @@ material.onBeforeCompile = (shader) => {
     `
       #include <begin_vertex>
 
-      float angle = (position.y + uTime) * 0.9;
+      float angle = sin(position.y + uTime) * rotationSpeed;
+      // float angle = - position.y * uTime * 0.2;
       mat2 rotateMatrix = get2dRotateMatrix(angle);
 
       transformed.xz = rotateMatrix * transformed.xz;
@@ -102,6 +156,8 @@ material.onBeforeCompile = (shader) => {
     `
   )
 }
+
+gui.add(customUniforms.rotationSpeed, 'value').min(0.1).max(2).step(0.1).name('rotationSpeed')
 
 /**
  * Models
@@ -114,12 +170,25 @@ gltfLoader.load(
         const mesh = gltf.scene.children[0]
         mesh.rotation.y = Math.PI * 0.5
         mesh.material = material
+        mesh.customDepthMaterial = depthMaterial
         scene.add(mesh)
 
         // Update materials
         updateAllMaterials()
     }
 )
+
+/**
+ * Plane
+ */
+const plane = new THREE.Mesh(
+  new THREE.PlaneGeometry(15, 15),
+  new THREE.MeshStandardMaterial()
+)
+plane.rotation.y = Math.PI
+plane.position.y = -5
+plane.position.z = 5
+scene.add(plane)
 
 /**
  * Lights

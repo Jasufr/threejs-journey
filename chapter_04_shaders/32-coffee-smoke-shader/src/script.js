@@ -94,18 +94,34 @@ const perlinTexture = textureLoader.load('./perlin.png')
 perlinTexture.wrapS = THREE.RepeatWrapping
 perlinTexture.wrapT = THREE.RepeatWrapping
 
+// Color
+const smokeColor = {
+  value: { r: 0.6, g: 0.3, b: 0.2 }
+}
+
 // Material
 const smokeMaterial = new THREE.ShaderMaterial({
   vertexShader: coffeeSmokeVertexShader,
   fragmentShader: coffeeSmokeFragmentShader,
   uniforms: {
     uTime: new THREE.Uniform(0),
-    uPerlinTexture: new THREE.Uniform(perlinTexture)
+    uPerlinTexture: new THREE.Uniform(perlinTexture),
+    uSmokeColor: new THREE.Uniform(
+      new THREE.Color(
+        smokeColor.value.r,
+        smokeColor.value.g,
+        smokeColor.value.b
+      )
+    )
   },
   side: THREE.DoubleSide,
   transparent: true,
   // wireframe: true
 })
+
+gui.addColor(smokeColor, 'value').onChange((value) => {
+  smokeMaterial.uniforms.uSmokeColor.value = value
+}).name('smokeColor')
 
 // Mesh
 const smoke = new THREE.Mesh(smokeGeometry, smokeMaterial)

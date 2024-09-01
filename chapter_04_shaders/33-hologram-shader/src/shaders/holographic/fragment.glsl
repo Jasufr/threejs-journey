@@ -7,6 +7,10 @@ void main() {
   // Normal
   vec3 normal = normalize(vNormal);
 
+  if(!gl_FrontFacing) {
+    normal *= - 1.0;
+  }
+
   // Stripes
   float stripes = mod((vPosition.y - uTime * 0.02) * 20.0, 1.0);
   stripes = pow(stripes, 3.0);

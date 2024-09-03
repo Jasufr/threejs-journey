@@ -87,6 +87,7 @@ const createFireworks = (count, position, size, texture, radius, color) => {
   // Geometry
   const positionArray = new Float32Array(count * 3)
   const sizesArray = new Float32Array(count)
+  const timeMultipliersArray = new Float32Array(count)
 
   for(let i = 0; i < count; i++) {
     const i3 = i * 3
@@ -104,11 +105,14 @@ const createFireworks = (count, position, size, texture, radius, color) => {
     positionArray[i3 + 2] = position.z
 
     sizesArray[i] = Math.random()
+
+    timeMultipliersArray[i] = 1 + Math.random()
   }
 
   const geometry = new THREE.BufferGeometry()
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionArray, 3))
   geometry.setAttribute('aSize', new THREE.Float32BufferAttribute(sizesArray, 1))
+  geometry.setAttribute('aTimeMultiplier', new THREE.Float32BufferAttribute(timeMultipliersArray, 1))
 
   // Material
   texture.flipY = false

@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import fireworkVertexShader from './shader/firework/vertex.glsl'
 import fireworkFragmentShader from './shader/firework/fragment.glsl'
+import gsap from 'gsap'
 
 /**
  * Base
@@ -82,7 +83,7 @@ const textures = [
   textureLoader.load('./particles/8.png'),
 ]
 
-const createFireworks = (count, position, size, texture, radius) => {
+const createFireworks = (count, position, size, texture, radius, color) => {
   // Geometry
   const positionArray = new Float32Array(count * 3)
   const sizesArray = new Float32Array(count)
@@ -118,7 +119,9 @@ const createFireworks = (count, position, size, texture, radius) => {
     uniforms: {
       uSize: new THREE.Uniform(size),
       uResolution: new THREE.Uniform(sizes.resolution),
-      uTexture: new THREE.Uniform(texture)
+      uTexture: new THREE.Uniform(texture),
+      uColor: new THREE.Uniform(color),
+      uProgress: new THREE.Uniform(0)
     },
     transparent: true,
     depthWrite: false,
@@ -129,6 +132,19 @@ const createFireworks = (count, position, size, texture, radius) => {
   const firework = new THREE.Points(geometry, material)
   firework.position.copy(position)
   scene.add(firework)
+
+  // Destroy
+  const destroy = () => {
+    scene.remove(firework)
+    geometry.dispose()
+    material.dispose()
+  }
+
+  // Animate
+  gsap.to(
+    material.uniforms.uProgress,
+    { value: 1, duration: 3, ease: 'linear', onComplete: destroy }
+  )
 }
 
 createFireworks(
@@ -136,8 +152,20 @@ createFireworks(
   new THREE.Vector3(),          // Position
   0.5,                          // Size
   textures[7],                  // Texture
-  1
+  1,                            // Radius
+  new THREE.Color('#8affff')    // Color
 )
+
+window.addEventListener('click', () => {
+  createFireworks(
+    100,                          // Count
+    new THREE.Vector3(),          // Position
+    0.5,                          // Size
+    textures[7],                  // Texture
+    1,                            // Radius
+    new THREE.Color('#8affff')    // Color
+  )
+})
 
 /**
  * Animate

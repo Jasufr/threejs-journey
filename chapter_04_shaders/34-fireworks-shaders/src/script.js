@@ -71,29 +71,58 @@ renderer.setPixelRatio(sizes.pixelRatio)
 /**
  * Fireworks
  */
-const createFireworks = (count, position, size) => {
+const textures = [
+  textureLoader.load('./particles/1.png'),
+  textureLoader.load('./particles/2.png'),
+  textureLoader.load('./particles/3.png'),
+  textureLoader.load('./particles/4.png'),
+  textureLoader.load('./particles/5.png'),
+  textureLoader.load('./particles/6.png'),
+  textureLoader.load('./particles/7.png'),
+  textureLoader.load('./particles/8.png'),
+]
+
+const createFireworks = (count, position, size, texture, radius) => {
   // Geometry
   const positionArray = new Float32Array(count * 3)
+  const sizesArray = new Float32Array(count)
 
   for(let i = 0; i < count; i++) {
     const i3 = i * 3
 
-    positionArray[i3 + 0] = Math.random() - 0.5
-    positionArray[i3 + 1] = Math.random() - 0.5
-    positionArray[i3 + 2] = Math.random() - 0.5
+    const spherical = new THREE.Spherical(
+      radius * (0.75 + Math.random() * 0.25),
+      Math.random() * Math.PI,
+      Math.random() * Math.PI * 2
+    )
+    const position = new THREE.Vector3()
+    position.setFromSpherical(spherical)
+
+    positionArray[i3 + 0] = position.x
+    positionArray[i3 + 1] = position.y
+    positionArray[i3 + 2] = position.z
+
+    sizesArray[i] = Math.random()
   }
 
   const geometry = new THREE.BufferGeometry()
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionArray, 3))
+  geometry.setAttribute('aSize', new THREE.Float32BufferAttribute(sizesArray, 1))
 
   // Material
+  texture.flipY = false
+
   const material = new THREE.ShaderMaterial({
     vertexShader: fireworkVertexShader,
     fragmentShader: fireworkFragmentShader,
     uniforms: {
       uSize: new THREE.Uniform(size),
-      uResolution: new THREE.Uniform(sizes.resolution)
-    }
+      uResolution: new THREE.Uniform(sizes.resolution),
+      uTexture: new THREE.Uniform(texture)
+    },
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
   })
 
   // Points
@@ -105,7 +134,9 @@ const createFireworks = (count, position, size) => {
 createFireworks(
   100,                          // Count
   new THREE.Vector3(),          // Position
-  0.5                            // Size
+  0.5,                          // Size
+  textures[7],                  // Texture
+  1
 )
 
 /**

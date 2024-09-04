@@ -4,6 +4,7 @@ import GUI from 'lil-gui'
 import fireworkVertexShader from './shader/firework/vertex.glsl'
 import fireworkFragmentShader from './shader/firework/fragment.glsl'
 import gsap from 'gsap'
+import { Sky } from 'three/addons/objects/Sky.js'
 
 /**
  * Base
@@ -24,27 +25,26 @@ const textureLoader = new THREE.TextureLoader()
  * Sizes
  */
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    pixelRatio: Math.min(window.devicePixelRatio, 2)
+  width: window.innerWidth,
+  height: window.innerHeight,
+  pixelRatio: Math.min(window.devicePixelRatio, 2)
 }
 sizes.resolution = new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)
 
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-    sizes.pixelRatio = Math.min(window.devicePixelRatio, 2)
-    sizes.resolution.set(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)
+window.addEventListener('resize', () => {
+  // Update sizes
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
+  sizes.pixelRatio = Math.min(window.devicePixelRatio, 2)
+  sizes.resolution.set(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)
 
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+  // Update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
 
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(sizes.pixelRatio)
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height)
+  renderer.setPixelRatio(sizes.pixelRatio)
 })
 
 /**
@@ -63,8 +63,8 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true
+  canvas: canvas,
+  antialias: true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(sizes.pixelRatio)
@@ -89,7 +89,7 @@ const createFirework = (count, position, size, texture, radius, color) => {
   const sizesArray = new Float32Array(count)
   const timeMultipliersArray = new Float32Array(count)
 
-  for(let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     const i3 = i * 3
 
     const spherical = new THREE.Spherical(
@@ -151,15 +151,6 @@ const createFirework = (count, position, size, texture, radius, color) => {
   )
 }
 
-// createFirework(
-//   100,                          // Count
-//   new THREE.Vector3(),          // Position
-//   0.5,                          // Size
-//   textures[7],                  // Texture
-//   1,                            // Radius
-//   new THREE.Color('#8affff')    // Color
-// )
-
 const createRandomFirework = () => {
   const count = Math.round(400 + Math.random() * 1000)
   const position = new THREE.Vector3(
@@ -181,18 +172,68 @@ createRandomFirework()
 window.addEventListener('click', createRandomFirework)
 
 /**
+ * Sky
+ */
+// Add Sky
+const sky = new Sky()
+sky.scale.setScalar(450000)
+scene.add(sky)
+
+const sun = new THREE.Vector3()
+
+/// GUI
+const skyParameters = {
+  turbidity: 10,
+  rayleigh: 3,
+  mieCoefficient: 0.005,
+  mieDirectionalG: 0.95,
+  elevation: -2.2,
+  azimuth: 180,
+  exposure: renderer.toneMappingExposure
+}
+
+const updateSky = () => {
+
+  const uniforms = sky.material.uniforms
+  uniforms['turbidity'].value = skyParameters.turbidity
+  uniforms['rayleigh'].value = skyParameters.rayleigh
+  uniforms['mieCoefficient'].value = skyParameters.mieCoefficient
+  uniforms['mieDirectionalG'].value = skyParameters.mieDirectionalG
+
+  const phi = THREE.MathUtils.degToRad(90 - skyParameters.elevation)
+  const theta = THREE.MathUtils.degToRad(skyParameters.azimuth)
+
+  sun.setFromSphericalCoords(1, phi, theta)
+
+  uniforms['sunPosition'].value.copy(sun)
+
+  renderer.toneMappingExposure = skyParameters.exposure
+  renderer.render(scene, camera)
+
+}
+
+gui.add(skyParameters, 'turbidity', 0.0, 20.0, 0.1).onChange(updateSky)
+gui.add(skyParameters, 'rayleigh', 0.0, 4, 0.001).onChange(updateSky)
+gui.add(skyParameters, 'mieCoefficient', 0.0, 0.1, 0.001).onChange(updateSky)
+gui.add(skyParameters, 'mieDirectionalG', 0.0, 1, 0.001).onChange(updateSky)
+gui.add(skyParameters, 'elevation', -3, 90, 0.01).onChange(updateSky)
+gui.add(skyParameters, 'azimuth', - 180, 180, 0.1).onChange(updateSky)
+gui.add(skyParameters, 'exposure', 0, 1, 0.0001).onChange(updateSky)
+
+updateSky()
+
+/**
  * Animate
  */
-const tick = () =>
-{
-    // Update controls
-    controls.update()
+const tick = () => {
+  // Update controls
+  controls.update()
 
-    // Render
-    renderer.render(scene, camera)
+  // Render
+  renderer.render(scene, camera)
 
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick)
 }
 
 tick()

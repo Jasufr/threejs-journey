@@ -1,5 +1,28 @@
 uniform vec3 uColor;
 
+uniform float uAmbientLightIntensity;
+uniform vec3 uAmbientLightColor;
+
+uniform vec3 uDirectionalLightColor;
+uniform float uDirectionalLightIntensity;
+uniform float uDirectionalLightPositionX;
+uniform float uDirectionalLightPositionY;
+uniform float uDirectionalLightPositionZ;
+
+uniform  vec3 uPointLightColor;
+uniform  float uPointLightIntensity;
+uniform  float uPointLightPositionX;
+uniform  float uPointLightPositionY;
+uniform  float uPointLightPositionZ;
+uniform  float uPointLightDecay;
+
+uniform  vec3 uPointLightTwoColor;
+uniform  float uPointLightTwoIntensity;
+uniform  float uPointLightTwoPositionX;
+uniform  float uPointLightTwoPositionY;
+uniform  float uPointLightTwoPositionZ;
+uniform  float uPointLightTwoDecay;
+
 varying vec3 vNormal;
 varying vec3 vPosition;
 
@@ -17,36 +40,48 @@ void main()
     // Light
     vec3 light = vec3(0.0);
     light += ambiantLight(
-      vec3(1.0),             // Light color
-      0.03                   // Light intensity
+      uAmbientLightColor,               // Light color
+      uAmbientLightIntensity            // Light intensity
     );
     light += directionalLight(
-      vec3(0.1, 0.1, 1.0),   // Light color
-      1.0,                   // Light intensity
-      normal,                // Normal
-      vec3(0.0, 0.0, 3.0),   // Light position
-      viewDirection,         // View direction
-      20.0                   // Specular power
+      uDirectionalLightColor,           // Light color
+      uDirectionalLightIntensity,       // Light intensity
+      normal,                           // Normal
+      vec3(
+        uDirectionalLightPositionX,
+        uDirectionalLightPositionY,
+        uDirectionalLightPositionZ
+        ),                              // Light position
+      viewDirection,                    // View direction
+      20.0                              // Specular power
     );
     light += pointLight(
-      vec3(1.0, 0.1, 0.1),   // Light color
-      1.0,                   // Light intensity
-      normal,                // Normal
-      vec3(0.0, 2.5, 0.0),   // Light position
-      viewDirection,         // View direction
-      20.0,                  // Specular power
-      vPosition,             // Position
-      0.25                   // Light decay
+      uPointLightColor,                 // Light color
+      uPointLightIntensity,             // Light intensity
+      normal,                           // Normal
+      vec3(
+        uPointLightPositionX,
+        uPointLightPositionY,
+        uPointLightPositionZ
+        ),                              // Light position
+      viewDirection,                    // View direction
+      20.0,                             // Specular power
+      vPosition,                        // Position
+      uPointLightDecay                  // Light decay
     );
     light += pointLight(
-      vec3(0.0, 1.0, 0.5),   // Light color
-      1.0,                   // Light intensity
-      normal,                // Normal
-      vec3(2.0, 2.0, 2.0),   // Light position
-      viewDirection,         // View direction
-      20.0,                  // Specular power
-      vPosition,             // Position
-      0.2                    // Light decay
+      uPointLightTwoColor,              // Light color
+      uPointLightTwoIntensity,          // Light intensity
+      normal,                           // Normal
+      vec3(
+        uPointLightTwoPositionX,
+        uPointLightTwoPositionY,
+        uPointLightTwoPositionZ
+        ),                              // Light position
+      viewDirection,                    // View direction
+      20.0,                             // Specular power
+      vPosition,                        // Position
+      uPointLightTwoDecay               // Light decay
     );
     color *= light;
 

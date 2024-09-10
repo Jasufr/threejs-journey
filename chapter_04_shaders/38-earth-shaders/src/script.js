@@ -25,9 +25,14 @@ const textureLoader = new THREE.TextureLoader()
 // Textures
 const earthDayTexture = textureLoader.load('./earth/day.jpg')
 earthDayTexture.colorSpace = THREE.SRGBColorSpace
+earthDayTexture.anisotropy = 8
+
 const earthNightTexture = textureLoader.load('./earth/night.jpg')
 earthNightTexture.colorSpace = THREE.SRGBColorSpace
+earthNightTexture.anisotropy = 8
+
 const earthSpecularCloudsTexture = textureLoader.load('./earth/specularClouds.jpg')
+earthSpecularCloudsTexture.anisotropy = 8
 
 // Mesh
 const earthGeometry = new THREE.SphereGeometry(2, 64, 64)
@@ -101,6 +106,7 @@ window.addEventListener('resize', () =>
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(sizes.pixelRatio)
 })
+
 
 /**
  * Camera

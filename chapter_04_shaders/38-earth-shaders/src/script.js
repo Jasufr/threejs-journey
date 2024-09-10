@@ -5,6 +5,7 @@ import earthVertexShader from './shaders/earth/vertex.glsl'
 import earthFragmentShader from './shaders/earth/fragment.glsl'
 import atmosphereVertexShader from './shaders/atmosphere/vertex.glsl'
 import atmosphereFragmentShader from './shaders/atmosphere/fragment.glsl'
+import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js'
 
 /**
  * Base
@@ -101,10 +102,34 @@ const sunDirection = new THREE.Vector3()
 
 // Debug
 const debugSun = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(0.1, 2),
+  new THREE.IcosahedronGeometry(0, 2),
   new THREE.MeshBasicMaterial()
 )
 scene.add(debugSun)
+
+
+
+/**
+ * Light and lensflare
+*/
+// Light
+const light = new THREE.PointLight( 0xff0000, 1.5, 2000 )
+light.position.copy(sunDirection).multiplyScalar(5)
+scene.add(light)
+
+// Lensfare
+const textureFlare0 = textureLoader.load( "lenses/lensflare0.png" )
+const textureFlare1 = textureLoader.load( "lenses/lensflare1.png" )
+
+const lensflare = new Lensflare()
+lensflare.addElement( new LensflareElement( textureFlare0, 362, 0 ) )
+lensflare.addElement( new LensflareElement( textureFlare1, 82, 0.2 ) )
+
+light.add( lensflare )
+
+const sphereSize = 1;
+const pointLightHelper = new THREE.PointLightHelper( light, sphereSize );
+scene.add( pointLightHelper );
 
 // Update
 const updateSun = () => {
@@ -116,6 +141,9 @@ const updateSun = () => {
     .copy(sunDirection)
     .multiplyScalar(5)
 
+  // Lensfare
+  light.position.copy(sunDirection).multiplyScalar(5)
+
   // Uniform
   earthMaterial.uniforms.uSunDirection.value.copy(sunDirection)
   atmosphereMaterial.uniforms.uSunDirection.value.copy(sunDirection)
@@ -125,6 +153,9 @@ updateSun()
 // Tweaks
 gui.add(sunSpherical, 'phi').min(0).max(Math.PI).onChange(updateSun)
 gui.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
+
+
+
 
 /**
  * Sizes

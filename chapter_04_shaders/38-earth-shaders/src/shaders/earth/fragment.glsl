@@ -5,6 +5,11 @@ uniform vec3 uSunDirection;
 uniform vec3 uAtmosphereDayColor;
 uniform vec3 uAtmosphereTwilightColor;
 
+uniform float uCloudStrenghtVariationSpeed;
+uniform float uCloudSpeed;
+
+uniform float uTime;
+
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vPosition;
@@ -27,8 +32,15 @@ void main()
     // Specular clouds color
     vec2 specularCloudsColor = texture(uSpecularCloudsTexture, vUv).rg;
 
+    // Clouds animation
+    vec2 cloudsUv = vUv;
+    cloudsUv.x -= uTime * uCloudSpeed;
+    float clouds = texture(uSpecularCloudsTexture, cloudsUv).g;
+    float cloudStrengthVariation = (sin(uTime * uCloudStrenghtVariationSpeed)) * 0.2;
+
     // Clouds
-    float cloudsMix = smoothstep(0.5, 1.0, specularCloudsColor.g);
+    // float cloudsMix = smoothstep(0.5, 1.0, specularCloudsColor.g);
+    float cloudsMix = smoothstep(0.2, 1.0, clouds + cloudStrengthVariation);
     cloudsMix *= dayMix;
     color = mix(color, vec3(1.0), cloudsMix);
 

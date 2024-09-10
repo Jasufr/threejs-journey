@@ -49,6 +49,8 @@ earthNightTexture.anisotropy = 8
 
 const earthSpecularCloudsTexture = textureLoader.load('./earth/specularClouds.jpg')
 earthSpecularCloudsTexture.anisotropy = 8
+earthSpecularCloudsTexture.wrapS = THREE.RepeatWrapping
+earthSpecularCloudsTexture.wrapT = THREE.RepeatWrapping
 
 // Mesh
 const earthGeometry = new THREE.SphereGeometry(2, 64, 64)
@@ -57,16 +59,22 @@ const earthMaterial = new THREE.ShaderMaterial({
   fragmentShader: earthFragmentShader,
   uniforms:
   {
+    uTime: new THREE.Uniform(0),
     uDayTexture: new THREE.Uniform(earthDayTexture),
     uNightTexture: new THREE.Uniform(earthNightTexture),
     uSpecularCloudsTexture: new THREE.Uniform(earthSpecularCloudsTexture),
     uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
     uAtmosphereDayColor: new THREE.Uniform(new THREE.Color(earthParameters.atmosphereDayColor)),
-    uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color(earthParameters.atmosphereTwilightColor))
+    uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color(earthParameters.atmosphereTwilightColor)),
+    uCloudStrenghtVariationSpeed: new THREE.Uniform(0.3),
+    uCloudSpeed: new THREE.Uniform(0.003)
   }
 })
 const earth = new THREE.Mesh(earthGeometry, earthMaterial)
 scene.add(earth)
+
+gui.add(earthMaterial.uniforms.uCloudStrenghtVariationSpeed, 'value').min(0.1).max(3).step(0.01).name('cloudStrenghtVariationSpeed')
+gui.add(earthMaterial.uniforms.uCloudSpeed, 'value').min(0.001).max(0.5).step(0.001).name('cloudSpeed')
 
 // Atmosphere
 const atmosphereMaterial = new THREE.ShaderMaterial({
@@ -167,7 +175,6 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(sizes.pixelRatio)
 renderer.setClearColor('#000011')
-// renderer.setClearColor('#333333')
 
 /**
  * Animate
@@ -178,6 +185,9 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime()
 
   earth.rotation.y = elapsedTime * 0.1
+
+  // Update uTime
+  earthMaterial.uniforms.uTime.value = elapsedTime
 
   // Update controls
   controls.update()

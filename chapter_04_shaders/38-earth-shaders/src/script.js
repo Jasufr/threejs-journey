@@ -148,7 +148,7 @@ gui.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
 const starsParameters = {}
 starsParameters.count = 100000
 starsParameters.size = 50
-starsParameters.starColor = '#ffffff'
+starsParameters.starColor = '#fffcb3'
 
 
 let geometry = null

@@ -6,6 +6,8 @@ import earthFragmentShader from './shaders/earth/fragment.glsl'
 import atmosphereVertexShader from './shaders/atmosphere/vertex.glsl'
 import atmosphereFragmentShader from './shaders/atmosphere/fragment.glsl'
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js'
+import starsVertexShader from './shaders/stars/vertex.glsl'
+import starsFragmentShader from './shaders/stars/fragment.glsl'
 
 /**
  * Base
@@ -31,12 +33,12 @@ earthParameters.atmosphereTwilightColor = '#ff6600'
 
 gui.addColor(earthParameters, 'atmosphereDayColor').onChange(() => {
   earthMaterial.uniforms.uAtmosphereDayColor.value.set(earthParameters.atmosphereDayColor),
-  atmosphereMaterial.uniforms.uAtmosphereDayColor.value.set(earthParameters.atmosphereDayColor)
+    atmosphereMaterial.uniforms.uAtmosphereDayColor.value.set(earthParameters.atmosphereDayColor)
 
 })
 gui.addColor(earthParameters, 'atmosphereTwilightColor').onChange(() => {
   earthMaterial.uniforms.uAtmosphereTwilightColor.value.set(earthParameters.atmosphereTwilightColor),
-  atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(earthParameters.atmosphereTwilightColor)
+    atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(earthParameters.atmosphereTwilightColor)
 })
 
 // Textures
@@ -107,29 +109,18 @@ const debugSun = new THREE.Mesh(
 )
 scene.add(debugSun)
 
-
-
 /**
- * Light and lensflare
+ * Lensflare
 */
-// Light
-const light = new THREE.PointLight( 0xff0000, 1.5, 2000 )
-light.position.copy(sunDirection).multiplyScalar(5)
-scene.add(light)
-
-// Lensfare
-const textureFlare0 = textureLoader.load( "lenses/lensflare0.png" )
-const textureFlare1 = textureLoader.load( "lenses/lensflare1.png" )
+const textureFlare0 = textureLoader.load("lenses/lensflare0.png")
+const textureFlare1 = textureLoader.load("lenses/lensflare1.png")
 
 const lensflare = new Lensflare()
-lensflare.addElement( new LensflareElement( textureFlare0, 362, 0 ) )
-lensflare.addElement( new LensflareElement( textureFlare1, 82, 0.2 ) )
+lensflare.addElement(new LensflareElement(textureFlare0, 362, 0))
+lensflare.addElement(new LensflareElement(textureFlare1, 52, 0.075))
+lensflare.addElement(new LensflareElement(textureFlare1, 38, 0.125))
 
-light.add( lensflare )
-
-const sphereSize = 1;
-const pointLightHelper = new THREE.PointLightHelper( light, sphereSize );
-scene.add( pointLightHelper );
+debugSun.add(lensflare)
 
 // Update
 const updateSun = () => {
@@ -141,9 +132,6 @@ const updateSun = () => {
     .copy(sunDirection)
     .multiplyScalar(5)
 
-  // Lensfare
-  light.position.copy(sunDirection).multiplyScalar(5)
-
   // Uniform
   earthMaterial.uniforms.uSunDirection.value.copy(sunDirection)
   atmosphereMaterial.uniforms.uSunDirection.value.copy(sunDirection)
@@ -154,8 +142,56 @@ updateSun()
 gui.add(sunSpherical, 'phi').min(0).max(Math.PI).onChange(updateSun)
 gui.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
 
+/**
+ * Stars
+ */
+const starsParameters = {}
+starsParameters.count = 1000000
+starsParameters.size = 50
 
+let geometry = null
+let material = null
+let points = null
 
+const generateStars = () => {
+  if(points !== null) {
+    geometry.dispose()
+    material.dispose()
+    scene.remove(points)
+  }
+
+  // Geometry
+  geometry = new THREE.BufferGeometry()
+
+  const positions = new Float32Array(starsParameters.count * 3)
+  for (let i = 0; i < starsParameters.count; i++) {
+    const i3 = i * 3
+    positions[i3 + 0] = ((Math.random() - 0.5) * 100)
+    positions[i3 + 1] = ((Math.random() - 0.5) * 100)
+    positions[i3 + 2] = ((Math.random() - 0.5) * 100)
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+
+  // Material
+  material = new THREE.ShaderMaterial({
+    vertexShader: starsVertexShader,
+    fragmentShader: starsFragmentShader,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexColors: true,
+    uniforms: {
+      uSize: new THREE.Uniform(starsParameters.size)
+    }
+  })
+
+  // Points
+  points = new THREE.Points(geometry, material)
+  scene.add(points)
+}
+gui.add(starsParameters, 'size').min(10).max(200).step(1).onFinishChange(generateStars)
+
+generateStars()
 
 /**
  * Sizes

@@ -146,7 +146,7 @@ gui.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
  * Stars
  */
 const starsParameters = {}
-starsParameters.count = 1000000
+starsParameters.count = 200000
 starsParameters.size = 50
 
 let geometry = null
@@ -164,11 +164,31 @@ const generateStars = () => {
   geometry = new THREE.BufferGeometry()
 
   const positions = new Float32Array(starsParameters.count * 3)
+  const minDistance = 3.5;
   for (let i = 0; i < starsParameters.count; i++) {
     const i3 = i * 3
-    positions[i3 + 0] = ((Math.random() - 0.5) * 100)
-    positions[i3 + 1] = ((Math.random() - 0.5) * 100)
-    positions[i3 + 2] = ((Math.random() - 0.5) * 100)
+
+    let x = Math.random() -0.5;
+    let y = Math.random() -0.5;
+    let z = Math.random() -0.5;
+    const length = Math.sqrt(x * x + y * y + z * z);
+
+    x /= length;
+    y /= length;
+    z /= length;
+
+    const distance = minDistance + Math.random() * 50;
+    x *= distance;
+    y *= distance;
+    z *= distance;
+
+    positions[i3 + 0] = x;
+    positions[i3 + 1] = y;
+    positions[i3 + 2] = z;
+
+    // positions[i3 + 0] = ((Math.random() - 0.5) * 50)
+    // positions[i3 + 1] = ((Math.random() - 0.5) * 50)
+    // positions[i3 + 2] = ((Math.random() - 0.5) * 50)
   }
 
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
@@ -190,6 +210,9 @@ const generateStars = () => {
   scene.add(points)
 }
 gui.add(starsParameters, 'size').min(10).max(200).step(1).onFinishChange(generateStars)
+gui.add()
+// gui.add(starsParameters, 'count').min(100).max(1000000).step(100).onFinishChange(generateStars)
+
 
 generateStars()
 

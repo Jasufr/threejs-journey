@@ -13,7 +13,7 @@ import starsFragmentShader from './shaders/stars/fragment.glsl'
  * Base
  */
 // Debug
-const gui = new GUI()
+const gui = new GUI({width: 290})
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -31,12 +31,14 @@ const earthParameters = {}
 earthParameters.atmosphereDayColor = '#00aaff'
 earthParameters.atmosphereTwilightColor = '#ff6600'
 
-gui.addColor(earthParameters, 'atmosphereDayColor').onChange(() => {
+const atmosphereTweaks = gui.addFolder('Atmosphere')
+atmosphereTweaks.close()
+atmosphereTweaks.addColor(earthParameters, 'atmosphereDayColor').onChange(() => {
   earthMaterial.uniforms.uAtmosphereDayColor.value.set(earthParameters.atmosphereDayColor),
     atmosphereMaterial.uniforms.uAtmosphereDayColor.value.set(earthParameters.atmosphereDayColor)
 
 })
-gui.addColor(earthParameters, 'atmosphereTwilightColor').onChange(() => {
+atmosphereTweaks.addColor(earthParameters, 'atmosphereTwilightColor').onChange(() => {
   earthMaterial.uniforms.uAtmosphereTwilightColor.value.set(earthParameters.atmosphereTwilightColor),
     atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(earthParameters.atmosphereTwilightColor)
 })
@@ -76,8 +78,10 @@ const earthMaterial = new THREE.ShaderMaterial({
 const earth = new THREE.Mesh(earthGeometry, earthMaterial)
 scene.add(earth)
 
-gui.add(earthMaterial.uniforms.uCloudStrenghtVariationSpeed, 'value').min(0.1).max(3).step(0.01).name('cloudStrenghtVariationSpeed')
-gui.add(earthMaterial.uniforms.uCloudSpeed, 'value').min(0.001).max(0.5).step(0.001).name('cloudSpeed')
+const cloudsTweaks = gui.addFolder('Clouds')
+cloudsTweaks.close()
+cloudsTweaks.add(earthMaterial.uniforms.uCloudStrenghtVariationSpeed, 'value').min(0.1).max(3).step(0.01).name('cloudStrenghtVariationSpeed')
+cloudsTweaks.add(earthMaterial.uniforms.uCloudSpeed, 'value').min(0.001).max(0.5).step(0.001).name('cloudSpeed')
 
 // Atmosphere
 const atmosphereMaterial = new THREE.ShaderMaterial({
@@ -139,15 +143,17 @@ const updateSun = () => {
 updateSun()
 
 // Tweaks
-gui.add(sunSpherical, 'phi').min(0).max(Math.PI).onChange(updateSun)
-gui.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
+const sunTweaks = gui.addFolder('Sun')
+sunTweaks.close()
+sunTweaks.add(sunSpherical, 'phi').min(0).max(Math.PI).onChange(updateSun)
+sunTweaks.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
 
 /**
  * Stars
  */
 const starsParameters = {}
 starsParameters.count = 100000
-starsParameters.size = 50
+starsParameters.size = 40
 starsParameters.starColor = '#fffcb3'
 
 
@@ -205,16 +211,20 @@ const generateStars = () => {
     uniforms: {
       uSize: new THREE.Uniform(starsParameters.size),
       uStarsColor: new THREE.Uniform(new THREE.Color(starsParameters.starColor))
-    }
+    },
+    // transparent: true
   })
 
   // Points
   points = new THREE.Points(geometry, material)
   scene.add(points)
 }
-gui.add(starsParameters, 'size').min(10).max(200).step(1).onFinishChange(generateStars)
-gui.add(starsParameters, 'count').min(100).max(500000).step(100).onFinishChange(generateStars)
-gui.addColor(starsParameters, 'starColor').onFinishChange(generateStars)
+
+const starsTweaks = gui.addFolder('Stars')
+starsTweaks.close()
+starsTweaks.add(starsParameters, 'size').min(10).max(200).step(1).onFinishChange(generateStars)
+starsTweaks.add(starsParameters, 'count').min(100).max(500000).step(100).onFinishChange(generateStars)
+starsTweaks.addColor(starsParameters, 'starColor').onFinishChange(generateStars)
 
 generateStars()
 

@@ -1,7 +1,5 @@
 uniform float uSize;
 
-varying vec2 vUv;
-
 void main()
 {
 
@@ -12,7 +10,4 @@ void main()
 
   gl_PointSize = uSize;
   gl_PointSize *= (1.0 / - viewPosition.z);
-
-
-    vUv = uv;
 }

@@ -146,15 +146,17 @@ gui.add(sunSpherical, 'theta').min(- Math.PI).max(Math.PI).onChange(updateSun)
  * Stars
  */
 const starsParameters = {}
-starsParameters.count = 200000
+starsParameters.count = 100000
 starsParameters.size = 50
+starsParameters.starColor = '#ffffff'
+
 
 let geometry = null
 let material = null
 let points = null
 
 const generateStars = () => {
-  if(points !== null) {
+  if (points !== null) {
     geometry.dispose()
     material.dispose()
     scene.remove(points)
@@ -168,9 +170,9 @@ const generateStars = () => {
   for (let i = 0; i < starsParameters.count; i++) {
     const i3 = i * 3
 
-    let x = Math.random() -0.5;
-    let y = Math.random() -0.5;
-    let z = Math.random() -0.5;
+    let x = Math.random() - 0.5;
+    let y = Math.random() - 0.5;
+    let z = Math.random() - 0.5;
     const length = Math.sqrt(x * x + y * y + z * z);
 
     x /= length;
@@ -201,7 +203,8 @@ const generateStars = () => {
     blending: THREE.AdditiveBlending,
     vertexColors: true,
     uniforms: {
-      uSize: new THREE.Uniform(starsParameters.size)
+      uSize: new THREE.Uniform(starsParameters.size),
+      uStarsColor: new THREE.Uniform(new THREE.Color(starsParameters.starColor))
     }
   })
 
@@ -210,9 +213,8 @@ const generateStars = () => {
   scene.add(points)
 }
 gui.add(starsParameters, 'size').min(10).max(200).step(1).onFinishChange(generateStars)
-gui.add()
-// gui.add(starsParameters, 'count').min(100).max(1000000).step(100).onFinishChange(generateStars)
-
+gui.add(starsParameters, 'count').min(100).max(500000).step(100).onFinishChange(generateStars)
+gui.addColor(starsParameters, 'starColor').onFinishChange(generateStars)
 
 generateStars()
 

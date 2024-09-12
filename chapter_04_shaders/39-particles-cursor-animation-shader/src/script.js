@@ -140,7 +140,7 @@ const particlesMaterial = new THREE.ShaderMaterial({
   uniforms:
   {
     uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
-    uPictureTexture: new THREE.Uniform(textureLoader.load('./picture-1.png')),
+    uPictureTexture: new THREE.Uniform(textureLoader.load('./picture-3.png')),
     uDisplacementTexture: new THREE.Uniform(displacement.texture)
   }
 })

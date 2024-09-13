@@ -30,28 +30,29 @@ gltfLoader.setDRACOLoader(dracoLoader)
  * Sizes
  */
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    pixelRatio: Math.min(window.devicePixelRatio, 2)
+  width: window.innerWidth,
+  height: window.innerHeight,
+  pixelRatio: Math.min(window.devicePixelRatio, 2)
 }
 
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-    sizes.pixelRatio = Math.min(window.devicePixelRatio, 2)
+window.addEventListener('resize', () => {
+  // Update sizes
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
+  sizes.pixelRatio = Math.min(window.devicePixelRatio, 2)
 
-    // Materials
+  // Materials
+  if(particles) {
     particles.material.uniforms.uResolution.value.set(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)
+  }
 
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+  // Update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
 
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(sizes.pixelRatio)
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height)
+  renderer.setPixelRatio(sizes.pixelRatio)
 })
 
 /**
@@ -70,8 +71,8 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true,
+  canvas: canvas,
+  antialias: true,
 })
 
 renderer.setSize(sizes.width, sizes.height)
@@ -84,42 +85,51 @@ renderer.setClearColor(debugObject.clearColor)
 /**
  * Particles
  */
-const particles = {}
+let particles = null
 
-// Geometry
-particles.geometry = new THREE.SphereGeometry(3)
-particles.geometry.setIndex(null)
+// Load models
+gltfLoader.load('./models.glb', (gltf) => {
+  particles = {}
 
-// Material
-particles.material = new THREE.ShaderMaterial({
+  // Positions
+  const positions = gltf.scene.children.map(child => child.geometry.attributes.position)
+
+
+  // Geometry
+  particles.geometry = new THREE.SphereGeometry(3)
+  particles.geometry.setIndex(null)
+
+  // Material
+  particles.material = new THREE.ShaderMaterial({
     vertexShader: particlesVertexShader,
     fragmentShader: particlesFragmentShader,
     uniforms:
     {
-        uSize: new THREE.Uniform(0.4),
-        uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio))
+      uSize: new THREE.Uniform(0.4),
+      uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio))
     },
     blending: THREE.AdditiveBlending,
     depthWrite: false
-})
+  })
 
-// Points
-particles.points = new THREE.Points(particles.geometry, particles.material)
-scene.add(particles.points)
+  // Points
+  particles.points = new THREE.Points(particles.geometry, particles.material)
+  scene.add(particles.points)
+
+})
 
 /**
  * Animate
  */
-const tick = () =>
-{
-    // Update controls
-    controls.update()
+const tick = () => {
+  // Update controls
+  controls.update()
 
-    // Render normal scene
-    renderer.render(scene, camera)
+  // Render normal scene
+  renderer.render(scene, camera)
 
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick)
 }
 
 tick()

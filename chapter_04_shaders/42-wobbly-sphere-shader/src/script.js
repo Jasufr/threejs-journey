@@ -43,12 +43,21 @@ rgbeLoader.load('./urban_alley_01_1k.hdr', (environmentMap) =>
 /**
  * Wobble
  */
+const uniforms = {
+  uTime: new THREE.Uniform(0),
+  uPositionFrequency: new THREE.Uniform(0.5),
+  uTimeFrequency: new THREE.Uniform(0.4),
+  uStrength: new THREE.Uniform(0.3)
+}
+
+
 // Material
 const material = new CustomShaderMaterial({
     // CSM
     baseMaterial: THREE.MeshPhysicalMaterial,
     vertexShader: wobbleVertexShader,
     fragmentShader: wobbleFragmentShader,
+    uniforms: uniforms,
     silent: true,
 
     // MeshPhysicalMaterial
@@ -62,7 +71,21 @@ const material = new CustomShaderMaterial({
     wireframe: false
 })
 
+const depthMaterial = new CustomShaderMaterial({
+  // CSM
+  baseMaterial: THREE.MeshDepthMaterial,
+  vertexShader: wobbleVertexShader,
+  uniforms: uniforms,
+  silent: true,
+
+  // MeshDepthMaterial
+  depthPacking: THREE.RGBADepthPacking
+})
+
 // Tweaks
+gui.add(uniforms.uPositionFrequency, 'value', 0, 2, 0.001).name('uPositionFrequency')
+gui.add(uniforms.uTimeFrequency, 'value', 0, 2, 0.001).name('uTimeFrequency')
+gui.add(uniforms.uStrength, 'value', 0, 2, 0.001).name('uStrength')
 gui.add(material, 'metalness', 0, 1, 0.001)
 gui.add(material, 'roughness', 0, 1, 0.001)
 gui.add(material, 'transmission', 0, 1, 0.001)
@@ -77,6 +100,7 @@ geometry.computeTangents()
 
 // Mesh
 const wobble = new THREE.Mesh(geometry, material)
+wobble.customDepthMaterial = depthMaterial
 wobble.receiveShadow = true
 wobble.castShadow = true
 scene.add(wobble)
@@ -164,6 +188,9 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Materials
+    uniforms.uTime.value = elapsedTime
 
     // Update controls
     controls.update()

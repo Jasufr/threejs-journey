@@ -51,6 +51,19 @@ const uniforms = {
 gui.add(uniforms.uSliceStart, 'value', - Math.PI, Math.PI, 0.001).name('uSliceStart')
 gui.add(uniforms.uSliceArc, 'value', 0, Math.PI * 2, 0.001).name('uSliceArc')
 
+const patchMap = {
+  csm_Slice: {
+    '#include <colorspace_fragment>':
+    `
+      #include <colorspace_fragment>
+
+      if(!gl_FrontFacing) {
+        gl_FragColor = vec4(0.75, 0.15, 0.3, 1.0);
+      }
+    `
+  }
+}
+
 // Material
 const material = new THREE.MeshStandardMaterial({
     metalness: 0.5,
@@ -65,13 +78,15 @@ const slicedMaterial = new CustomShaderMaterial({
   vertexShader: slicedVertexShader,
   fragmentShader: slicedFragmentShader,
   uniforms: uniforms,
+  patchMap: patchMap,
   silent: true,
 
   // MeshStandardMaterial
   metalness: 0.5,
   roughness: 0.25,
   envMapIntensity: 0.5,
-  color: '#858080'
+  color: '#858080',
+  side: THREE.DoubleSide
 })
 
 // Model

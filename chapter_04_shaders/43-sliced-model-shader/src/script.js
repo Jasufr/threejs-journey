@@ -89,6 +89,19 @@ const slicedMaterial = new CustomShaderMaterial({
   side: THREE.DoubleSide
 })
 
+const slicedDepthMaterial = new CustomShaderMaterial({
+  // CSM
+  baseMaterial: THREE.MeshDepthMaterial,
+  vertexShader: slicedVertexShader,
+  fragmentShader: slicedFragmentShader,
+  uniforms: uniforms,
+  patchMap: patchMap,
+  silent: true,
+
+  // MeshDepthMaterial
+  depthPacking: THREE.RGBADepthPacking
+})
+
 // Model
 let model = null
 gltfLoader.load('/gears.glb', (gltf) => {
@@ -98,6 +111,7 @@ gltfLoader.load('/gears.glb', (gltf) => {
     if(child.isMesh) {
       if(child.name === 'outerHull') {
         child.material = slicedMaterial
+        child.customDepthMaterial = slicedDepthMaterial
       } else {
         child.material = material
       }

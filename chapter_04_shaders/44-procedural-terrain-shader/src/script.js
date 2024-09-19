@@ -38,7 +38,7 @@ rgbeLoader.load('/spruit_sunrise.hdr', (environmentMap) =>
 /**
  * Terrain
  */
-const geometry = new THREE.PlaneGeometry(20, 20, 500, 500)
+const geometry = new THREE.PlaneGeometry(20, 20, 2000, 2000)
 geometry.deleteAttribute('uv')
 geometry.deleteAttribute('normal')
 geometry.rotateX(- Math.PI * 0.5)

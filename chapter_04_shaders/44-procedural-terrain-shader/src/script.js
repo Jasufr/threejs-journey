@@ -115,7 +115,7 @@ scene.add(terrain)
  * Water
  */
 const water = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10, 1, 1),
+  new THREE.PlaneGeometry(20, 20, 1, 1),
   new THREE.MeshPhysicalMaterial({
     transmission: 1,
     roughness: 0.3

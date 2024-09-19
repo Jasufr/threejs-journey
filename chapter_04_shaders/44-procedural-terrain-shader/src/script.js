@@ -38,7 +38,7 @@ rgbeLoader.load('/spruit_sunrise.hdr', (environmentMap) =>
 /**
  * Terrain
  */
-const geometry = new THREE.PlaneGeometry(10, 10, 500, 500)
+const geometry = new THREE.PlaneGeometry(20, 20, 500, 500)
 geometry.deleteAttribute('uv')
 geometry.deleteAttribute('normal')
 geometry.rotateX(- Math.PI * 0.5)
@@ -129,8 +129,8 @@ scene.add(water)
  * Board
  */
 // Brushes
-const boardFill = new Brush(new THREE.BoxGeometry(11, 2, 11))
-const boardHole = new Brush(new THREE.BoxGeometry(10, 2.1, 10))
+const boardFill = new Brush(new THREE.BoxGeometry(21, 2, 21))
+const boardHole = new Brush(new THREE.BoxGeometry(20, 2.1, 20))
 // boardHole.position.y = 0.2
 // boardHole.updateMatrixWorld()
 

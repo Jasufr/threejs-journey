@@ -8,6 +8,7 @@ import { DotScreenPass } from 'three/examples/jsm/Addons.js'
 import { GlitchPass } from 'three/examples/jsm/Addons.js'
 import { RGBShiftShader } from 'three/examples/jsm/Addons.js'
 import { ShaderPass } from 'three/examples/jsm/Addons.js'
+import { GammaCorrectionShader } from 'three/examples/jsm/Addons.js'
 
 /**
  * Base
@@ -145,17 +146,25 @@ effectComposer.setSize(sizes.width, sizes.height)
 const renderPass = new RenderPass(scene, camera)
 effectComposer.addPass(renderPass)
 
+// Dot screen pass
 const dotScreenPass = new DotScreenPass()
 dotScreenPass.enabled = false
 effectComposer.addPass(dotScreenPass)
 
+// Glitch pass
 const glitchPass = new GlitchPass()
 glitchPass.goWild = true
 glitchPass.enabled = false
 effectComposer.addPass(glitchPass)
 
+// RGB Shift pass
 const rgbShiftPass = new ShaderPass(RGBShiftShader)
+rgbShiftPass.enabled = false
 effectComposer.addPass(rgbShiftPass)
+
+// Gamma correction pass
+const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
+effectComposer.addPass(gammaCorrectionPass)
 
 
 /**

@@ -158,9 +158,9 @@ tick()
 console.log(renderer.info)
 
 // // Tip 6
-// scene.remove(cube)
-// cube.geometry.dispose()
-// cube.material.dispose()
+scene.remove(cube)
+cube.geometry.dispose()
+cube.material.dispose()
 
 // // Tip 10
 // directionalLight.shadow.camera.top = 3

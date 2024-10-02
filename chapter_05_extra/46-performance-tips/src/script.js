@@ -185,42 +185,42 @@ sphere.receiveShadow = false
 floor.castShadow = false
 floor.receiveShadow = true
 
-// // Tip 12
+// Tip 12
 renderer.shadowMap.autoUpdate = false
 renderer.shadowMap.needsUpdate = true
 
 // Tip 18
-const geometries = []
+// const geometries = []
 
-for (let i = 0; i < 50; i++) {
-  const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
+// for (let i = 0; i < 50; i++) {
+//   const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
 
-  geometry.rotateX((Math.random() - 0.5) * Math.PI * 2)
-  geometry.rotateY((Math.random() - 0.5) * Math.PI * 2)
+//   geometry.rotateX((Math.random() - 0.5) * Math.PI * 2)
+//   geometry.rotateY((Math.random() - 0.5) * Math.PI * 2)
 
-  geometry.translate(
-    (Math.random() - 0.5) * 10,
-    (Math.random() - 0.5) * 10,
-    (Math.random() - 0.5) * 10
-  )
+//   geometry.translate(
+//     (Math.random() - 0.5) * 10,
+//     (Math.random() - 0.5) * 10,
+//     (Math.random() - 0.5) * 10
+//   )
 
-  geometries.push(geometry)
-}
+//   geometries.push(geometry)
+// }
 
-const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
+// const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
 
-const material = new THREE.MeshNormalMaterial()
+// const material = new THREE.MeshNormalMaterial()
 
-const mesh = new THREE.Mesh(mergedGeometry, material)
+// const mesh = new THREE.Mesh(mergedGeometry, material)
 
-scene.add(mesh)
+// scene.add(mesh)
 
-// // Tip 19
+// Tip 19
+// const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
+// const material = new THREE.MeshNormalMaterial()
+
 // for(let i = 0; i < 50; i++)
 // {
-//     const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
-
-//     const material = new THREE.MeshNormalMaterial()
 
 //     const mesh = new THREE.Mesh(geometry, material)
 //     mesh.position.x = (Math.random() - 0.5) * 10

@@ -287,8 +287,8 @@ for(let i = 0; i < 50; i++)
     // mesh.rotation.y = (Math.random() - 0.5) * Math.PI * 2
 }
 
-// // Tip 29
-// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// Tip 29
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 // // Tip 31, 32, 34 and 35
 // const shaderGeometry = new THREE.PlaneGeometry(10, 10, 256, 256)

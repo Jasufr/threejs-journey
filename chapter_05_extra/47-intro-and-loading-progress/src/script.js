@@ -11,7 +11,16 @@ const loadingBarElement = document.querySelector('.loading-bar')
 const loadingManager = new THREE.LoadingManager(
   // Loaded
   () => {
-    gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 })
+    gsap.delayedCall(0.5, () => {
+      gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 })
+      loadingBarElement.classList.add('ended')
+      loadingBarElement.style.transform = ''
+    })
+    // window.setTimeout(() => {
+    //   gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 })
+    //   loadingBarElement.classList.add('ended')
+    //   loadingBarElement.style.transform = ''
+    // }, 500)
   },
   // Progress
   (itemUrl, itemsLoaded, itemsTotal) => {

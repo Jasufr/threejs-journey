@@ -43,6 +43,10 @@ body
   left: 50%;
 }
 
+.point.visible .label {
+  transform: scale(1, 1);
+}
+
 .point .label {
   position: absolute;
   top: -20px;
@@ -57,8 +61,30 @@ body
   line-height: 40px;
   font-weight: 100;
   font-size: 14px;
+  cursor: help;
+  transform: scale(0, 0);
+  transition: transform 0.3s;
+}
+
+.point:hover .text {
+  opacity: 1;
 }
 
 .point .text {
-  display: none;
+  position: absolute;
+  top: 30px;
+  left: -120px;
+  width: 200px;
+  padding: 20px;
+  border-radius: 4px;
+  background: #00000077;
+  color: #ffffff;
+  line-height: 1.3em;
+  font-family: Helvetica, Arial, sans-serif;
+  text-align: center;
+  font-weight: 100;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
 }

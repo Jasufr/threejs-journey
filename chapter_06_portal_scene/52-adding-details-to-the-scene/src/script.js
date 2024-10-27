@@ -8,6 +8,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
  * Base
  */
 // Debug
+const debugObject = {}
 const gui = new GUI({
     width: 400
 })
@@ -35,7 +36,7 @@ gltfLoader.setDRACOLoader(dracoLoader)
 /**
  * Textures
  */
-const bakedTexture = textureLoader.load('baked.jpg')
+const bakedTexture = textureLoader.load('bakedWithMoreSamples.jpg')
 bakedTexture.flipY = false
 bakedTexture.colorSpace = THREE.SRGBColorSpace
 
@@ -55,7 +56,7 @@ const portalLightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
  * Model
  */
 gltfLoader.load(
-    'portal.glb',
+    'portalMerged.glb',
     (gltf) =>
     {
         scene.add(gltf.scene)
@@ -120,6 +121,12 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+debugObject.clearColor = '#1a2617'
+renderer.setClearColor(debugObject.clearColor)
+gui.addColor(debugObject, 'clearColor').onChange(() => {
+  renderer.setClearColor(debugObject.clearColor)
+})
 
 /**
  * Animate

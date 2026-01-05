@@ -7,6 +7,15 @@ const toto = "there";
 
 root.render(
   <>
-    <App />
+    <App>
+      <h1>My first react app</h1>
+    </App>
+    {/* <App
+      children={
+        <>
+          <h1>My first react app</h1>
+        </>
+      }
+    /> */}
   </>
 );

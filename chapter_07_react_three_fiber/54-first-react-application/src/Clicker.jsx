@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-export default function Clicker() {
+export default function Clicker({ increment, keyName, color }) {
   console.log("render");
 
   const [count, setCount] = useState(
-    parseInt(localStorage.getItem("count") ?? 0)
+    parseInt(localStorage.getItem(keyName) ?? 0)
   );
 
   useEffect(() => {
@@ -12,22 +12,23 @@ export default function Clicker() {
 
     return () => {
       console.log("component disposed");
-      localStorage.removeItem("count");
+      localStorage.removeItem(keyName);
     };
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("count", count);
+    localStorage.setItem(keyName, count);
   }, [count]);
 
   const buttonClick = () => {
     // setCount((value) => value + 1);
     setCount(count + 1);
+    increment();
   };
 
   return (
     <div>
-      <div>Clicks count: {count}</div>
+      <div style={{ color: color }}>Clicks count: {count}</div>
       <button onClick={buttonClick}>Click me</button>
     </div>
   );

@@ -7,7 +7,7 @@ const toto = "there";
 
 root.render(
   <>
-    <App>
+    <App clickersCount={3}>
       <h1>My first react app</h1>
     </App>
     {/* <App

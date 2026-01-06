@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Clicker from "./Clicker.jsx";
 
-export default function App({ children }) {
+export default function App({ clickersCount, children }) {
   const [hasClicker, setHasClicker] = useState(true);
   const [count, setCount] = useState(0);
 
@@ -13,6 +13,22 @@ export default function App({ children }) {
     setCount(count + 1);
   };
 
+  const colors = useMemo(() => {
+    const colors = [];
+
+    for (let i = 0; i < clickersCount; i++) {
+      colors.push(`hsl(${Math.random() * 360}deg, 100%, 70%)`);
+    }
+
+    return colors;
+  }, [clickersCount]);
+
+  // const tempArray = [...Array(clickersCount)];
+
+  // tempArray.map((value, index) => {
+  //   console.log(value);
+  // });
+
   return (
     <>
       {children}
@@ -23,7 +39,18 @@ export default function App({ children }) {
       {/* {hasClicker ? <Clicker /> : null} */}
       {hasClicker && (
         <>
-          <Clicker
+          {[...Array(clickersCount)].map((value, index) => {
+            return (
+              <Clicker
+                key={index}
+                increment={increment}
+                keyName={`count ${index}`}
+                // color={`hsl(${Math.random() * 360}deg, 100%, 70%)`}
+                color={colors[index]}
+              />
+            );
+          })}
+          {/* <Clicker
             increment={increment}
             keyName="countA"
             color={`hsl(${Math.random() * 360}deg, 100%, 70%)`}
@@ -37,7 +64,7 @@ export default function App({ children }) {
             increment={increment}
             keyName="countC"
             color={`hsl(${Math.random() * 360}deg, 100%, 70%)`}
-          />
+          /> */}
         </>
       )}
     </>

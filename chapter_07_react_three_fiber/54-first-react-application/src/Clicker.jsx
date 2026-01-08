@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Clicker({ increment, keyName, color }) {
-  console.log("render");
+  // console.log("render");
 
   const [count, setCount] = useState(
     parseInt(localStorage.getItem(keyName) ?? 0)
@@ -10,13 +10,13 @@ export default function Clicker({ increment, keyName, color }) {
   const buttonRef = useRef();
 
   useEffect(() => {
-    console.log("first render");
+    // console.log("first render");
 
     buttonRef.current.style.backgroundColor = "papayawhip";
     buttonRef.current.style.color = "salmon";
 
     return () => {
-      console.log("component disposed");
+      // console.log("component disposed");
       localStorage.removeItem(keyName);
     };
   }, []);

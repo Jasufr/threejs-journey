@@ -10,8 +10,18 @@ import {
   DepthOfField,
 } from "@react-three/postprocessing";
 import { ToneMappingMode, BlendFunction, GlitchMode } from "postprocessing";
+import Drunk from "./Drunk";
+import { useRef } from "react";
+import { useControls } from "leva";
 
 export default function Experience() {
+  const drunkRef = useRef();
+
+  const drunkProps = useControls("Drunk Effect", {
+    frequency: { value: 2, min: 1, max: 20 },
+    amplitude: { value: 0.1, min: 0, max: 1 },
+  });
+
   return (
     <>
       <color args={["#ffffff"]} attach="background" />
@@ -35,6 +45,11 @@ export default function Experience() {
           focalLength={0.025}
           bokehScale={6}
         /> */}
+        <Drunk
+          ref={drunkRef}
+          {...drunkProps}
+          blendFunction={BlendFunction.DARKEN}
+        />
         <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       </EffectComposer>
 

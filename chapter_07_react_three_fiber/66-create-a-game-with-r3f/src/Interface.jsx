@@ -1,6 +1,17 @@
 import { useKeyboardControls } from "@react-three/drei";
+import useGame from "./stores/useGame";
+import { useEffect, useRef } from "react";
+import { addEffect } from "@react-three/fiber";
 
 export default function Interface() {
+  const time = useRef();
+  const restart = useGame((state) => {
+    return state.restart;
+  });
+  const phase = useGame((state) => {
+    return state.phase;
+  });
+
   const forward = useKeyboardControls((state) => {
     return state.forward;
   });
@@ -17,13 +28,29 @@ export default function Interface() {
     return state.jump;
   });
 
+  useEffect(() => {
+    const unsubscribeEffet = addEffect(() => {
+      const state = useGame.getState();
+    });
+
+    return () => {
+      unsubscribeEffet();
+    };
+  }, []);
+
   return (
     <div className="interface">
       {/* Time */}
-      <div className="time">0.00</div>
+      <div ref={time} className="time">
+        0.00
+      </div>
 
       {/* Restart */}
-      <div className="restart">Restart</div>
+      {phase === "ended" && (
+        <div className="restart" onClick={restart}>
+          Restart
+        </div>
+      )}
 
       {/* Controls */}
       <div className="controls">

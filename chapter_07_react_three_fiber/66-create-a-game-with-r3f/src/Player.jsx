@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { RigidBody, useRapier } from "@react-three/rapier";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import useGame from "./stores/useGame";
 
 export default function Player() {
   const body = useRef();
@@ -13,6 +14,19 @@ export default function Player() {
     () => new THREE.Vector3(10, 10, 10),
   );
   const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
+
+  const start = useGame((state) => {
+    return state.start;
+  });
+  const restart = useGame((state) => {
+    return state.restart;
+  });
+  const end = useGame((state) => {
+    return state.end;
+  });
+  const blocksCount = useGame((state) => {
+    return state.blocksCount;
+  });
 
   const jump = () => {
     const origin = body.current.translation();
@@ -26,7 +40,23 @@ export default function Player() {
     }
   };
 
+  const reset = () => {
+    body.current.setTranslation({ x: 0, y: 1, z: 0 });
+    body.current.setLinvel({ x: 0, y: 0, z: 0 });
+    body.current.setAngvel({ x: 0, y: 0, z: 0 });
+  };
+
   useEffect(() => {
+    const unsubscribeReset = useGame.subscribe(
+      (state) => {
+        return state.phase;
+      },
+      (value) => {
+        if (value === "ready") {
+          reset();
+        }
+      },
+    );
     const unsubscribeJump = subscribeKeys(
       (state) => {
         return state.jump;
@@ -38,8 +68,14 @@ export default function Player() {
       },
     );
 
+    const unsubscribeAny = subscribeKeys(() => {
+      start();
+    });
+
     return () => {
       unsubscribeJump();
+      unsubscribeAny();
+      unsubscribeReset();
     };
   }, []);
 
@@ -96,6 +132,17 @@ export default function Player() {
 
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
+
+    /**
+     * Phases
+     */
+    if (bodyPosition.z < -(blocksCount * 4 + 2)) {
+      end();
+    }
+
+    if (bodyPosition.y < -4) {
+      restart();
+    }
   });
   return (
     <RigidBody

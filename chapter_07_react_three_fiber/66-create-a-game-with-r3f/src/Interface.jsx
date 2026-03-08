@@ -31,6 +31,21 @@ export default function Interface() {
   useEffect(() => {
     const unsubscribeEffet = addEffect(() => {
       const state = useGame.getState();
+
+      let elapsedTime = 0;
+
+      if (state.phase === "playing") {
+        elapsedTime = Date.now() - state.startTime;
+      } else if (state.phase === "ended") {
+        elapsedTime = state.endTime - state.startTime;
+      }
+
+      elapsedTime /= 1000;
+      elapsedTime = elapsedTime.toFixed(2);
+
+      if (time.current) {
+        time.current.textContent = elapsedTime;
+      }
     });
 
     return () => {
